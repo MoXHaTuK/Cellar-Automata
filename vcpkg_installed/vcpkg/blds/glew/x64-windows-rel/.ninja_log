@@ -1,0 +1,9 @@
+# ninja log v6
+14	103	7719402788607244	CMakeFiles/glew.dir/C_/Users/user/source/repos/Cellar-Automata/vcpkg_installed/vcpkg/blds/glew/src/glew-325dbb3aae.clean/build/glew.rc.res	a1f493150d7f499e
+27	114	7719402788737251	CMakeFiles/glew_s.dir/C_/Users/user/source/repos/Cellar-Automata/vcpkg_installed/vcpkg/blds/glew/src/glew-325dbb3aae.clean/build/glew.rc.res	7f15105e2cb4abb2
+7	17008	7719402788537265	CMakeFiles/glew.dir/C_/Users/user/source/repos/Cellar-Automata/vcpkg_installed/vcpkg/blds/glew/src/glew-325dbb3aae.clean/src/glew.c.obj	2aa56385f96bacd6
+17008	17214	7719402960359159	bin/glew32.dll	4d29e70afe19c97a
+17008	17214	7719402960359159	lib/glew32.lib	4d29e70afe19c97a
+21	17539	7719402788677243	CMakeFiles/glew_s.dir/C_/Users/user/source/repos/Cellar-Automata/vcpkg_installed/vcpkg/blds/glew/src/glew-325dbb3aae.clean/src/glew.c.obj	8fcb44ac969af226
+17540	17625	7719402963872497	lib/libglew32.lib	e0eb3a48c57d2fa9
+17626	17685	7719402964728640	CMakeFiles/install.util	e04d0e76ec9cb0cd

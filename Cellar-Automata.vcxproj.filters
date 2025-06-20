@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CudaCompile Include="initKernel.cu">
+      <Filter>kernels</Filter>
+    </CudaCompile>
+    <CudaCompile Include="phasePutVehicle.cu">
+      <Filter>kernels</Filter>
+    </CudaCompile>
+    <CudaCompile Include="phaseSetLength.cu">
+      <Filter>kernels</Filter>
+    </CudaCompile>
+    <CudaCompile Include="phaseSetSpeed.cu">
+      <Filter>kernels</Filter>
+    </CudaCompile>
+    <CudaCompile Include="phaseTurn.cu">
+      <Filter>kernels</Filter>
+    </CudaCompile>
+    <CudaCompile Include="phaseMove.cu">
+      <Filter>kernels</Filter>
+    </CudaCompile>
+    <CudaCompile Include="phaseLights.cu">
+      <Filter>kernels</Filter>
+    </CudaCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="include">
+      <UniqueIdentifier>{23ce4b6e-8c2e-4ea6-9f6a-b56c36cde444}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{521a58f3-7093-4304-830c-8701df97a8fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="kernels">
+      <UniqueIdentifier>{d137a966-1653-4c7f-b6a1-f03587eab876}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Cell.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="ConvolveWindow.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="ConvolveWindows.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="HostSide.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="CommonDefs.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="PhaseLaunchers.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="HostSide.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="vcpkg.json" />
+  </ItemGroup>
+</Project>
