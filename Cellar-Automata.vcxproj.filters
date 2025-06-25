@@ -53,6 +53,9 @@
     <ClInclude Include="PhaseLaunchers.hpp">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="RenderUtils.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">

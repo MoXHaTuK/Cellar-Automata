@@ -141,6 +141,18 @@ static GLuint      vao = 0;
 static GLuint      vbo = 0;
 static GLuint      prog = 0;
 
+static const char* vsSrc = R"(#version 450 core
+    const vec2 v[6]=vec2[6](vec2(-1,-1),vec2(1,-1),vec2(1,1),
+                            vec2(-1,-1),vec2(1,1),vec2(-1,1));
+    const vec2 t[6]=vec2[6](vec2(0,0),vec2(1,0),vec2(1,1),
+                            vec2(0,0),vec2(1,1),vec2(0,1));
+    out vec2 uv; void main(){gl_Position=vec4(v[gl_VertexID],0,1);
+                             uv=t[gl_VertexID];})";
+
+static const char* fsSrc = R"(#version 450 core
+    in vec2 uv; uniform sampler2D uTex; out vec4 FragColor;
+    void main(){ FragColor = texture(uTex, uv); })";
+
 static GLuint compile(GLenum type, const char* src)
 {
     GLuint s = glCreateShader(type);
@@ -173,90 +185,62 @@ static GLuint buildProgram(const char* vsSrc, const char* fsSrc)
     return p;
 }
 
-void initGL(int w, int h)
+void initGL(int w, int h, int channels, int bitDepth)
 {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-    if (!glfwInit()) { std::cerr << "GLFW init failed\n"; std::exit(EXIT_FAILURE); }
-
+    if (!glfwInit()) { std::cerr << "GLFW init failed\n";std::exit(EXIT_FAILURE); }
     win = glfwCreateWindow(w, h, "Traffic CA", nullptr, nullptr);
-    if (!win) { std::cerr << "Window creation failed\n"; std::exit(EXIT_FAILURE); }
+    if (!win) { std::cerr << "Window creation failed\n";std::exit(EXIT_FAILURE); }
     glfwMakeContextCurrent(win);
-
     glewExperimental = GL_TRUE;
-    if (glewInit() != GLEW_OK) { std::cerr << "GLEW init failed\n"; std::exit(EXIT_FAILURE); }
+    if (glewInit() != GLEW_OK) { std::cerr << "GLEW init failed\n";std::exit(EXIT_FAILURE); }
     glGetError();
-
     std::cout << "OpenGL: " << glGetString(GL_VERSION) << "\n"
-        << "GPU    : " << glGetString(GL_RENDERER) << "\n";
-
+        << "GPU: " << glGetString(GL_RENDERER) << "\n";
     glViewport(0, 0, w, h);
     glClearColor(0, 0, 0, 1);
 
+    GLenum ifmt = (channels == 1) ?
+        (bitDepth == 8 ? GL_R8 : GL_R16) :
+        (bitDepth == 8 ? GL_RGBA8 : GL_RGBA16);
     glCreateTextures(GL_TEXTURE_2D, 1, &tex);
-    glTextureStorage2D(tex, 1, GL_R8, w, h); 
+    glTextureStorage2D(tex, 1, ifmt, w, h);
     glTextureParameteri(tex, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTextureParameteri(tex, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
+    size_t pixelBytes = channels * (bitDepth / 8);
     glCreateBuffers(1, &pbo);
-    glNamedBufferData(pbo, w * h, nullptr, GL_STREAM_DRAW);
-
-    static const char* vsSrc = R"(#version 450 core
-        const vec2 verts[6] = vec2[6](
-             vec2(-1,-1), vec2( 1,-1), vec2( 1, 1),
-             vec2(-1,-1), vec2( 1, 1), vec2(-1, 1));
-        const vec2 uvs[6] = vec2[6](
-             vec2(0,0), vec2(1,0), vec2(1,1),
-             vec2(0,0), vec2(1,1), vec2(0,1));
-        out vec2 vUV;
-        void main(){
-            gl_Position = vec4(verts[gl_VertexID],0,1);
-            vUV = uvs[gl_VertexID];
-        })";
-
-    static const char* fsSrc = R"(#version 450 core
-        in  vec2 vUV;
-        uniform sampler2D uTex;
-        out vec4 FragColor;
-        void main() {
-            float r = texture(uTex, vUV).r;
-            FragColor = vec4(r,r,r,1);
-        })";
+    glNamedBufferData(pbo, size_t(w) * h * pixelBytes, nullptr, GL_STREAM_DRAW);
 
     prog = buildProgram(vsSrc, fsSrc);
-
     glCreateVertexArrays(1, &vao);
 }
 
 void updateFrame(const Frame& f)
 {
     if (!win) return;
-
     const size_t bytes = f.byteSize();
     glNamedBufferSubData(pbo, 0, bytes, f.data());
 
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    GLenum format = (f.channels == 1) ? GL_RED : GL_RGBA;
     GLenum type = (f.bitDepth == 8) ? GL_UNSIGNED_BYTE : GL_UNSIGNED_SHORT;
-    GLenum format = GL_RED;
 
     glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pbo);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glTextureSubImage2D(tex, 0, 0, 0, f.w, f.h, format, type, nullptr);
     glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 }
 
 bool renderFrame()
 {
-    if (!win) return false;
-    if (glfwWindowShouldClose(win)) return false;
-
+    if (!win || glfwWindowShouldClose(win)) return false;
     glClear(GL_COLOR_BUFFER_BIT);
     glUseProgram(prog);
     glBindTextureUnit(0, tex);
     glBindVertexArray(vao);
     glDrawArrays(GL_TRIANGLES, 0, 6);
-
     glfwSwapBuffers(win);
     glfwPollEvents();
     return true;

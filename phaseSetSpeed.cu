@@ -1,6 +1,8 @@
 #include "Cell.hpp"
 #include "CommonDefs.hpp"
 
+#define MAX_SPEED 3
+
 constexpr int R = 1;
 
 template<int R, typename DT>
@@ -30,8 +32,16 @@ __global__ void phaseSetSpeed(DT* in, DT* out, int W, int H)
     DT c = in[gy * W + gx];
     if (c.length)
     {
-        int next = hd_min<int>(int(c.speed) + 1, 3);
-        c.speed = static_cast<decltype(c.speed)>(next);
+        int dir = (c.speed >= 100) ? 100 : 0;
+        int v = c.speed % 100;
+        int vmax = MAX_SPEED - (c.length - 1);
+        v = hd_min<int>(v + 1, vmax);
+        c.speed = dir + v;
+    }
+    if (c.speed > 0)
+    {
+        unsigned r = 1664525u * (gx + gy * W) + 1013904223u;
+        if ((r >> 24) < 26) c.speed--;
     }
     out[gy * W + gx] = c;
 }

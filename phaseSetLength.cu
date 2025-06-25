@@ -1,5 +1,6 @@
 #include "Cell.hpp"
 #include "ConvolveWindows.hpp"
+#include "CommonDefs.hpp"
 
 constexpr int R = 1;
 
@@ -31,7 +32,11 @@ __global__ void phaseSetLength(DT* in, DT* out, int W, int H)
     if (gx >= W || gy >= H) return;
 
     DT c = tile[(threadIdx.y + 1) * (blockDim.x + 2) + (threadIdx.x + 1)];
-    if (c.length == 0 && c.speed != 0) c.length = 1;
+    if (c.speed != 0)
+    {
+        if (c.length == 0) c.length = 1;
+        else c.length = hd_max<int>(c.length - 1, 1);
+    }
     out[gy * W + gx] = c;
 }
 

@@ -361,3 +361,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/traffic_lane.tiff
+/traffic_length.tiff
+/traffic_speed.tiff

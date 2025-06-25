@@ -101,6 +101,7 @@
     <ClInclude Include="ConvolveWindows.hpp" />
     <ClInclude Include="HostSide.hpp" />
     <ClInclude Include="PhaseLaunchers.hpp" />
+    <ClInclude Include="RenderUtils.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="HostSide.cpp" />

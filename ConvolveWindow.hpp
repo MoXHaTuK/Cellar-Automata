@@ -2,7 +2,6 @@
 #include "Cell.hpp"
 #include "cuda_runtime.h"
 
-// простейший «окно» для чтения соседей (шаблон радиуса R)
 template<int R, typename T>
 struct __align__(16) Window
 {

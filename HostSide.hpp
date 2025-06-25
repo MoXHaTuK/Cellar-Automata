@@ -28,6 +28,6 @@ struct Frame {
 bool loadTiff(const std::string& file, Frame& f);
 bool saveTiff(const std::string& file, const Frame& f);
 
-void  initGL(int w, int h);
+void  initGL(int w, int h, int channels, int bitDepth);
 void  updateFrame(const Frame& f);
 bool  renderFrame();

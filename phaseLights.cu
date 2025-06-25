@@ -4,31 +4,28 @@
 template<typename DT>
 __global__ void phaseLights(DT* in, DT* out, int W, int H)
 {
-    int idx = (blockIdx.y * blockDim.y + threadIdx.y) * W +
-        (blockIdx.x * blockDim.x + threadIdx.x);
-    if (idx >= W * H) return;
+    int gx = blockIdx.x * blockDim.x + threadIdx.x;
+    int gy = blockIdx.y * blockDim.y + threadIdx.y;
+    int idx = gy * W + gx;
+    if (gx >= W || gy >= H) return;
 
     DT c = in[idx];
+    out[idx] = c;
 
-    /* светофор хранит Ђspeedї как код состо€ни€:
-       0-99  Ц зелЄный дл€ WE,   t = 99-counter
-       100-199 Ц зелЄный дл€ SN, t = 199-counter
-       201 / 202 Ц жЄлтый */
+    if (c.lane != LANE_TL)
+        return;
 
-    if (c.lane != LANE_TL) { out[idx] = c; return; }
-
-    int state = c.speed;
-    if (state == 201 || state == 202) {                 // жЄлтый
+    int state = c.speed % 200;
+    if (state == 201 || state == 202) {
         state = (state == 201) ? 100 + LIGHTS_TICKS : LIGHTS_TICKS;
     }
-    else if (state == 0 || state == 100) {          // момент переключени€
+    else if (state == 0 || state == 100) {
         state = (state == 0) ? 201 : 202;
     }
     else {
         state--;
     }
-    c.speed = state;
-    out[idx] = c;
+    out[idx].speed = state;
 }
 
 extern "C" void launchPhaseLights(uint8_t depth, void* A, void* B, int W, int H)

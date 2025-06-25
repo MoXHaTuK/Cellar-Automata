@@ -21,6 +21,8 @@ __global__ void initKernel(DT* g, int W, int H, unsigned seed)
     bool isCross = onVerRoad && onHorRoad;
 
     DT c{};
+    curandStatePhilox4_32_10_t rng;
+    curand_init(seed, y * W + x, 0, &rng);
 
     if (isCross)
         c.lane = LANE_CROSS;
@@ -35,15 +37,16 @@ __global__ void initKernel(DT* g, int W, int H, unsigned seed)
     {
         bool northTL = onVerRoad && (localY == ROAD_LANES - 1);
         bool westTL = onHorRoad && (localX == ROAD_LANES - 1);
-        if (northTL || westTL) c.lane = LANE_TL;
+        if (northTL || westTL) 
+        { 
+            c.lane = LANE_TL;
+            c.speed = (curand_uniform(&rng) > 0.5f) ? 201 : 202;
+        }
     }
 
-    curandStatePhilox4_32_10_t rng;
-    curand_init(seed, y * W + x, 0, &rng);
-
     if (c.lane == LANE_WE || c.lane == LANE_SN) {
-        if (curand_uniform(&rng) > 0.97f) {   // ~3 %
-            c.speed = curand(&rng) % 4;      // 0…3
+        if (curand_uniform(&rng) > 0.97f) {
+            c.speed = curand(&rng) % 4;
             c.length = 1;
         }
     }

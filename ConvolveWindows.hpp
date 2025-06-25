@@ -1,8 +1,7 @@
 #pragma once
-#include "Cell.hpp"
 #include <curand_kernel.h>
-
-template<int R> struct TileDim { static constexpr int pad = 2 * R; };
+#include "Cell.hpp"
+#include "CommonDefs.hpp"
 
 template<int R, typename T>
 class ConvolveWindows
